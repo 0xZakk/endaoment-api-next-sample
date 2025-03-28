@@ -47,9 +47,14 @@ export async function signup(formData: FormData) {
   redirect('/')
 }
 
+export async function signout() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  return redirect("/sign-in");
+}
+
 // NOTE: See the example
 // TODO: login --> signInAction
 // TODO signup --> signUpAction
-// TODO: logout --> signOutAction
 // TODO: forgotPasswordAction
 // TODO: resetPasswordAction

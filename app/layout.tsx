@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </aside>
 
         {/* Mobile menu */}
-        <div className="md:hidden absolute top-4 left-4 z-50">
+        <div className="md:hidden absolute top-4 right-4 z-50">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -67,7 +67,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto p-4">{children}</main>
+        <main className="flex-1 overflow-y-auto px-4 py-16 md:py-4">{children}</main>
       </body>
     </html>
   );

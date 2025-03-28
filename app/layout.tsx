@@ -1,3 +1,4 @@
+// TODO: don't show this on the Login page, but do show it on every other page (once the user has signed in)
 "use client";
 import "./globals.css";
 import { cn } from "@/lib/utils";

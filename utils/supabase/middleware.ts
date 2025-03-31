@@ -10,9 +10,33 @@ const PUBLIC_PATHS = [
   '/auth/callback',
 ]
 
+/*
+ * Auth Redirect Middleware
+ *
+ * There are three conditions under which we want to redirect the user:
+ *
+ * 1. If they're visiting a public path, then we want to allow them to continue
+ *    forward, whether or not they are logged in.
+ *
+ * 2. If they are visiting a gated, internal path, then we want to check that
+ *    they are logged in first. If they are signed in to the app, then we move
+ *    on to the next check. If they are not signed in, then we redirect them
+ *    into the authentication flow for this app.
+ *
+ * 3. If they're visiting a private, internal route and are signed in but have
+ *    not connected their Endaoment account, then we want to redirect them to
+ *    the onboarding flow. That will connect their Endaoment account to their
+ *    account in this application. If they are signed in and have connected
+ *    their Endaoment account, then we let them through to the route.
+ *
+ * All that is to say, to visit a private route, a user must be both signed in
+ * and have connected their Endaoment account. 
+ *
+ */
 export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
   console.log(`Middleware: ${pathname}`)
+
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -43,25 +67,49 @@ export async function updateSession(request: NextRequest) {
   // issues with users being randomly logged out.
 
   // IMPORTANT: DO NOT REMOVE auth.getUser()
-
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
+  // 1. If the user is visiting a public path, then we want to allow them to
+  //    continue.
   if (PUBLIC_PATHS.includes(pathname)) {
     return NextResponse.next()
   }
 
+  // 2. If the user is visiting a gated path, then we want to first check that
+  //    they are signed in.
   if (
-    !user &&
-    !pathname.startsWith('/auth')
+    !user
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    // no user, redirect the user to the login page
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
     return NextResponse.redirect(url)
   }
 
+  // 3. If the user is signed in but has not connected their Endaoment account,
+  //   then we want to redirect them to the flow to connect their Endaoment
+  // Get the user's Endaoment account data:
+  const { data, error } = await supabase
+    .from('endaoment_tokens')
+    .select('*')
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error("Error fetching token data:", error);
+  }
+
+  console.log("User token data:", data);
+  // If the user has not connected their Endaoment account, then redirect them
+  // to connect their Endaoment account.
+  if (pathname != '/auth/endaoment' && data && data.length === 0) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/auth/endaoment'
+    return NextResponse.redirect(url)
+  }
+
+  // TODO: figure out what this means
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:

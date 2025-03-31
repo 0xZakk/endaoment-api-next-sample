@@ -4,7 +4,7 @@ import { createClient } from "@/utils/supabase/client"
 import { useRouter } from "next/navigation"
 import { useCallback } from "react"
 import FloatingActionMenu from "@/components/ui/floating-action-menu";
-import { Compass, Sparkle, LogOut, House } from "lucide-react";
+import { Compass, Sparkle, LogOut, House, Plus } from "lucide-react";
 
 const dafs = [
   { label: "Fund 1", id: "1", Icon: <Sparkle className="w-4 h-4" /> },
@@ -50,6 +50,11 @@ export default function Navigation() {
             label: "Explore",
             Icon: <Compass className="w-4 h-4" />,
             onClick: () => console.log("Settings clicked"),
+          },
+          {
+            label: "New DAF",
+            Icon: <Plus className="w-4 h-4" />,
+            onClick: () => console.log("New DAF clicked"),
           },
           {
             label: "Logout",

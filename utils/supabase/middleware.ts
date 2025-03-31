@@ -1,7 +1,18 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const PUBLIC_PATHS = [
+  '/',
+  '/auth/login',
+  '/auth/signup',
+  '/auth/forgot-password',
+  '/auth/forgot-password/check-email',
+  '/auth/callback',
+]
+
 export async function updateSession(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  console.log(`Middleware: ${pathname}`)
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -37,9 +48,13 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  if (PUBLIC_PATHS.includes(pathname)) {
+    return NextResponse.next()
+  }
+
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith('/auth')
+    !pathname.startsWith('/auth')
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()

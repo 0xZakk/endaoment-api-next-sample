@@ -1,12 +1,11 @@
-// TODO: Make it so you don't have to be signed in to see this route
-'use client'
+import { ReactNode } from "react";
 
-export default function ErrorPage() {
+export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <main className="flex-1 overflow-y-auto px-4 py-16 md:py-4">
       <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
         <div className="w-full max-w-sm">
-          <p>Something went wrong. Check the console for errors.</p>
+          {children}
         </div>
       </div>
     </main>

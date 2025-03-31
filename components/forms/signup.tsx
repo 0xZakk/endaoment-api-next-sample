@@ -10,23 +10,22 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-interface LoginFormProps extends React.ComponentPropsWithoutRef<"div"> {
-  logInAction: (formData: FormData) => Promise<void>
-  code?: string
+interface SignupFormProps extends React.ComponentPropsWithoutRef<"div"> {
+  signupActions: (formData: FormData) => Promise<void>
 }
 
-export function LoginForm({
+export function SignupForm({
   className,
-  logInAction,
+  signupActions,
   ...props
-}: LoginFormProps) {
+}: SignupFormProps) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Sign Up</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your email below to create a new account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -37,7 +36,6 @@ export function LoginForm({
                 <Input
                   id="email"
                   type="email"
-                  name="email"
                   placeholder="m@example.com"
                   required
                 />
@@ -45,26 +43,25 @@ export function LoginForm({
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="/auth/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
                 </div>
-                <Input id="password" name="password" type="password" required />
+                <Input id="password" type="password" required />
+              </div><div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password-confirm">Confirm Password</Label>
+                </div>
+                <Input id="password-confirm" type="password-confirm" required />
               </div>
-              <Button formAction={logInAction} type="submit" className="w-full">
-                Login
+              <Button formAction={signupActions} type="submit" className="w-full">
+                Sign Up
               </Button>
               <Button variant="outline" className="w-full">
-                Login with Google
+                Sign up with Google
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <a href="/auth/signup" className="underline underline-offset-4">
-                Sign up
+              Already have an account?{" "}
+              <a href="/auth/login" className="underline underline-offset-4">
+                Sign in
               </a>
             </div>
           </form>

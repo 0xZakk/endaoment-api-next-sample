@@ -1,3 +1,5 @@
+import { createClient } from "@/utils/supabase/server";
+
 export default function FundList() {
   return (
     <div>

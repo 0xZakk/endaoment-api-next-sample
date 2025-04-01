@@ -46,7 +46,6 @@ export async function GET(request: Request) {
   }
 
   const tokenData = await tokenResponse.json();
-  console.log("tokenData", tokenData);
 
   // Save the token data to your database or session
   const { access_token, token_type, refresh_token, expires_in, id_token, scope } = tokenData;
@@ -75,8 +74,6 @@ export async function GET(request: Request) {
     console.error('Error saving token data:', updateError);
     return NextResponse.json({ error: 'Failed to save token data' }, { status: 500 });
   }
-
-  console.log("Token record saved:", tokenRecord);
 
   // Redirect to dashboard after successful token save
   return NextResponse.redirect(new URL('/dashboard', request.url));

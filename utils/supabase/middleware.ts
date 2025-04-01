@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { refreshToken } from '@/utils/endaoment/utils'
 
 const PUBLIC_PATHS = [
   '/',
@@ -108,14 +109,33 @@ export async function updateSession(request: NextRequest) {
     console.error("Error fetching token data:", error);
   }
 
-  console.log("User token data:", data);
-
   // If the user has not connected their Endaoment account, then redirect them
   // to connect their Endaoment account.
   if (!(ENDAOMENT_CONNECTION_PATHS.includes(pathname)) && data && data.length === 0) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/endaoment'
     return NextResponse.redirect(url)
+  }
+
+  // If their Endaoment token has expired, then refresh it
+  // Only attempt refresh if we're not on an Endaoment connection path
+  if (!ENDAOMENT_CONNECTION_PATHS.includes(pathname) && data && data.length > 0) {
+    const token = data[0];
+    const tokenExpirationTime = new Date(token.inserted_at).getTime() + (token.expires_in * 1000);
+    const currentTime = new Date().getTime();
+
+    if (currentTime >= tokenExpirationTime) {
+      console.log('Token expired, refreshing...');
+      const { error: refreshError } = await refreshToken();
+      
+      if (refreshError) {
+        console.error('Error refreshing token:', refreshError);
+        // If we can't refresh the token, redirect to re-authenticate
+        const url = request.nextUrl.clone()
+        url.pathname = '/auth/endaoment'
+        return NextResponse.redirect(url)
+      }
+    }
   }
 
   // TODO: figure out what this means

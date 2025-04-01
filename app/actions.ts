@@ -61,7 +61,7 @@ export async function forgotPassword(formData: FormData) {
 
   if (!email) {
     // TODO: come back and implement encodedRedirect()
-    console.log('forgotPassword error: email is required')
+    console.error('forgotPassword error: email is required')
     redirect('/error')
   }
 

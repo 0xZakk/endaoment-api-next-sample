@@ -6,22 +6,27 @@ import { useCallback } from "react"
 import FloatingActionMenu from "@/components/ui/floating-action-menu";
 import { Compass, Sparkle, LogOut, House, Plus } from "lucide-react";
 
+interface Fund {
+  label: string;
+  id: string;
+}
+
 const dafs = [
   { label: "Fund 1", id: "1", Icon: <Sparkle className="w-4 h-4" /> },
   { label: "Fund 2", id: "2", Icon: <Sparkle className="w-4 h-4" /> },
   { label: "Fund 3", id: "3", Icon: <Sparkle className="w-4 h-4" /> },
 ];
 
-export default function Navigation() {
+export default function Navigation({ funds }: { funds: Fund[] }) {
   const supabase = createClient()
   const router = useRouter()
 
-  const options = dafs.map(daf => {
+  const options = funds.map(daf => {
     return {
       label: daf.label,
-      Icon: daf.Icon,
-      onClick: () => router.push(`/fund/${daf.id}`),
-    }
+      Icon: <Sparkle className="w-4 h-4" />,
+      onClick: () => router.push(`/dashboard/fund/${daf.id}`),
+    };
   })
 
   const handleSignOut = useCallback(async () => {
@@ -38,7 +43,7 @@ export default function Navigation() {
             label: "Home",
             Icon: <House className="w-4 h-4" />,
             onClick: () => router.push("/dashboard"),
-          },
+        },
           ...options,
           // TODO: Come back and add an Account screen + flow (?)
           // {

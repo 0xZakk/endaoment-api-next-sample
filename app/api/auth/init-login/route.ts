@@ -18,8 +18,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed to save OAuth state' }, { status: 500 });
   }
 
-  console.log("data", data);
-
   const urlParams = new URLSearchParams()
   urlParams.append('response_type', 'code');
   urlParams.append('prompt', 'consent');

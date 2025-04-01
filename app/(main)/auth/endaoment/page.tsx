@@ -27,7 +27,6 @@ export default function EndaomentLogin() {
         },
       })
       const data = await res.json();
-      console.log(data)
       // redirect the user to data.url:
       window.location.href = data.url;
     } catch (error) {

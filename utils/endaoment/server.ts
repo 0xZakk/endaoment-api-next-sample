@@ -97,7 +97,7 @@ export async function createDaf(formData: FormData) {
     throw new Error(tokenError.message);
   }
 
-  const fundCreationRequest = await fetch(`${staticEndaomentURLs.api}/funds`, {
+  const fundCreationRequest = await fetch(`${staticEndaomentURLs.api}/v1/funds`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ export async function getFund(id: string) {
     throw new Error(tokenError.message);
   }
 
-  const response = await fetch(`${staticEndaomentURLs.api}/funds/${id}`, {
+  const response = await fetch(`${staticEndaomentURLs.api}/v1/funds/${id}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token.access_token}`,
@@ -169,7 +169,7 @@ export async function getFundActivity(id: string) {
     throw new Error(tokenError.message);
   }
 
-  const response = await fetch(`${staticEndaomentURLs.api}/activity/fund/${id}`, {
+  const response = await fetch(`${staticEndaomentURLs.api}/v1/activity/fund/${id}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token.access_token}`,
@@ -201,7 +201,7 @@ export async function getFundTransfers(id: string) {
     throw new Error(tokenError.message);
   }
 
-  const response = await fetch(`${staticEndaomentURLs.api}/transfers/grants/fund/${id}`, {
+  const response = await fetch(`${staticEndaomentURLs.api}/v1/transfers/grants/fund/${id}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token.access_token}`,
@@ -233,7 +233,7 @@ export async function getWireInstructions() {
   }
 
   const response = await fetch(
-    `${staticEndaomentURLs.api}/donation-pledges/wire/details/domestic`,
+    `${staticEndaomentURLs.api}/v1/donation-pledges/wire/details/domestic`,
     {
       method: 'GET',
       headers: {
@@ -267,7 +267,7 @@ export async function createWireDonation(request: Omit<WireDonationRequest, 'don
   }
 
   const response = await fetch(
-    `${staticEndaomentURLs.api}/donation-pledges/wire`,
+    `${staticEndaomentURLs.api}/v1/donation-pledges/wire`,
     {
       method: 'POST',
       headers: {
@@ -291,4 +291,36 @@ export async function createWireDonation(request: Omit<WireDonationRequest, 'don
     data: donationData,
     error: null,
   };
+}
+
+// Get My Funds
+export async function getMyFunds() {
+  const { data: token, error: tokenError } = await getUserToken()
+
+  if (tokenError) {
+    console.error("Error fetching token:", tokenError);
+    throw new Error(tokenError.message);
+  }
+
+  const response = await fetch(`${staticEndaomentURLs.api}/v1/funds/mine`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token.access_token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    return {
+      data: null,
+      error: new Error(`Failed to fetch funds: ${response.statusText}`),
+    }
+  }
+
+  const fundsData = await response.json()
+
+  return {
+    data: fundsData,
+    error: null,
+  }
 }

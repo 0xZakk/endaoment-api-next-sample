@@ -117,6 +117,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // TODO: token refresh is running a lot. Double check this logic
   // If their Endaoment token has expired, then refresh it
   // Only attempt refresh if we're not on an Endaoment connection path
   if (!ENDAOMENT_CONNECTION_PATHS.includes(pathname) && data && data.length > 0) {
@@ -127,7 +128,7 @@ export async function updateSession(request: NextRequest) {
     if (currentTime >= tokenExpirationTime) {
       console.log('Token expired, refreshing...');
       const { error: refreshError } = await refreshToken();
-      
+
       if (refreshError) {
         console.error('Error refreshing token:', refreshError);
         // If we can't refresh the token, redirect to re-authenticate

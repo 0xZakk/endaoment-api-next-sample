@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { staticEndaomentURLs } from './utils';
+import { getUserToken } from '@/utils/supabase/utils';
 
 type Address = {
   line1: string;
@@ -51,23 +52,12 @@ export async function createDaf(formData: FormData) {
     throw new Error("Missing required fields");
   }
 
-  const supabase = await createClient()
+  const { data: token, error: tokenError } = await getUserToken()
 
-  // Get the user's token from the request
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  const { data, error } = await supabase
-    .from('endaoment_tokens')
-    .select('*')
-    .eq('user_id', user.id);
-
-  if (error) {
-    console.error("Error fetching token data:", error);
+  if (tokenError) {
+    console.error("Error fetching token:", tokenError);
+    throw new Error(tokenError.message);
   }
-
-  const token = data[0];
 
   const fundCreationRequest = await fetch(`${staticEndaomentURLs.api}/funds`, {
     method: 'POST',
@@ -87,5 +77,111 @@ export async function createDaf(formData: FormData) {
     throw new Error(fundCreationResponse.error);
   }
 
+  // Store some of the fund data in the database
+  const { data: fundRecord, error: insertError } = await supabase
+    .from('funds')
+    .insert({
+      user_id: user.id,
+      name: fundCreationResponse.name,
+      description: fundCreationResponse.description,
+      endaoment_uuid: fundCreationResponse.id,
+    })
+
   redirect('/dashboard/fund/' + fundCreationResponse.id);
+}
+
+// Get Fund
+export async function getFund(id: string) {
+  const { data: token, error: tokenError } = await getUserToken()
+
+  if (tokenError) {
+    console.error("Error fetching token:", tokenError);
+    throw new Error(tokenError.message);
+  }
+
+  const response = await fetch(`${staticEndaomentURLs.api}/funds/${id}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token.access_token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    return {
+      data: null,
+      error: new Error(`Failed to fetch fund data: ${response.statusText}`),
+    }
+  }
+
+  const fundData = await response.json()
+
+  return {
+    data: fundData,
+    error: null,
+  }
+}
+
+// Get Fund Activity
+export async function getFundActivity(id: string) {
+  const { data: token, error: tokenError } = await getUserToken()
+
+  if (tokenError) {
+    console.error("Error fetching token:", tokenError);
+    throw new Error(tokenError.message);
+  }
+
+  const response = await fetch(`${staticEndaomentURLs.api}/activity/fund/${id}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token.access_token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    return {
+      data: null,
+      error: new Error(`Failed to fetch fund activity: ${response.statusText}`),
+    }
+  }
+
+  const activityData = await response.json()
+
+  return {
+    data: activityData,
+    error: null,
+  }
+}
+
+// Get Fund Transfers
+export async function getFundTransfers(id: string) {
+  const { data: token, error: tokenError } = await getUserToken()
+
+  if (tokenError) {
+    console.error("Error fetching token:", tokenError);
+    throw new Error(tokenError.message);
+  }
+
+  const response = await fetch(`${staticEndaomentURLs.api}/transfers/grants/fund/${id}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token.access_token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    return {
+      data: null,
+      error: new Error(`Failed to fetch fund transfers: ${response.statusText}`),
+    }
+  }
+
+  const transfersData = await response.json()
+
+  return {
+    data: transfersData,
+    error: null,
+  }
 }

@@ -1,6 +1,5 @@
-import { createClient } from "@/utils/supabase/server";
-
-export default function FundList() {
+// TODO: delete this page?
+export default async function FundList() {
   return (
     <div>
       <h1 className="text-2xl font-bold">Fund List</h1>

@@ -9,6 +9,12 @@ const PUBLIC_PATHS = [
   '/auth/forgot-password/check-email',
   '/auth/callback',
 ]
+const ENDAOMENT_CONNECTION_PATHS = [
+  '/dev/token',
+  '/auth/endaoment',
+  '/api/auth/init-login',
+  '/api/auth/verify-login',
+]
 
 /*
  * Auth Redirect Middleware
@@ -71,6 +77,8 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  console.log('User:', user?.id, user?.email)
+
   // 1. If the user is visiting a public path, then we want to allow them to
   //    continue.
   if (PUBLIC_PATHS.includes(pathname)) {
@@ -101,9 +109,10 @@ export async function updateSession(request: NextRequest) {
   }
 
   console.log("User token data:", data);
+
   // If the user has not connected their Endaoment account, then redirect them
   // to connect their Endaoment account.
-  if (pathname != '/auth/endaoment' && data && data.length === 0) {
+  if (!(ENDAOMENT_CONNECTION_PATHS.includes(pathname)) && data && data.length === 0) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/endaoment'
     return NextResponse.redirect(url)

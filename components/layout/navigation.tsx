@@ -11,12 +11,6 @@ interface Fund {
   id: string;
 }
 
-const dafs = [
-  { label: "Fund 1", id: "1", Icon: <Sparkle className="w-4 h-4" /> },
-  { label: "Fund 2", id: "2", Icon: <Sparkle className="w-4 h-4" /> },
-  { label: "Fund 3", id: "3", Icon: <Sparkle className="w-4 h-4" /> },
-];
-
 export default function Navigation({ funds }: { funds: Fund[] }) {
   const supabase = createClient()
   const router = useRouter()
@@ -43,7 +37,7 @@ export default function Navigation({ funds }: { funds: Fund[] }) {
             label: "Home",
             Icon: <House className="w-4 h-4" />,
             onClick: () => router.push("/dashboard"),
-        },
+          },
           ...options,
           // TODO: Come back and add an Account screen + flow (?)
           // {
@@ -57,9 +51,9 @@ export default function Navigation({ funds }: { funds: Fund[] }) {
             onClick: () => console.log("Settings clicked"),
           },
           {
-            label: "New DAF",
+            label: "Create a New DAF",
             Icon: <Plus className="w-4 h-4" />,
-            onClick: () => console.log("New DAF clicked"),
+            onClick: () => router.push("/dashboard/fund/create"),
           },
           {
             label: "Logout",

@@ -105,6 +105,3 @@ export async function resetPassword(formData: FormData) {
   return redirect('/auth/reset-password/success')
 }
 
-// NOTE: See the example
-// TODO: login --> signInAction
-// TODO signup --> signUpAction

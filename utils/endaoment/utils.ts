@@ -27,12 +27,12 @@ interface GetOAuthStateResult {
 }
 
 export const staticEndaomentURLs = {
-    auth: 'https://auth.dev.endaoment.org',
-    api: 'https://api.dev.endaoment.org',
-    verify: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-login`,
-    // redirect: process.env.NEXT_PUBLIC_APP_URL
-    redirect: "http://localhost:5454/dev/token"
-  };
+  auth: 'https://auth.dev.endaoment.org',
+  api: 'https://api.dev.endaoment.org/v1',
+  verify: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-login`,
+  // redirect: process.env.NEXT_PUBLIC_APP_URL
+  redirect: "http://localhost:5454/dev/token"
+};
 
 export function toUrlSafe(base64: string) {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
@@ -52,10 +52,10 @@ export async function generateCodeChallenge(codeVerifier: string) {
 
 export async function saveOAuthState({ codeVerifier, codeChallenge, state }: OAuthState): Promise<SaveOAuthStateResult> {
   const supabase = await createClient();
-  
+
   // Get the current user's ID
   const { data: { user }, error: userError } = await supabase.auth.getUser();
-  
+
   if (userError || !user) {
     return {
       data: null,
@@ -98,7 +98,7 @@ export async function getOAuthState(stateFromUrl: string): Promise<GetOAuthState
       data: null,
       error: userError || new Error('User not authenticated')
     };
-  }  
+  }
 
   // Fetch the OAuth state from the database
   const { data, error: queryError } = await supabase

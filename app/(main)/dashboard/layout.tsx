@@ -19,7 +19,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     console.error("Error fetching token data:", tokenError);
   }
 
-  const response = await fetch(`${staticEndaomentURLs.api}/v1/funds/mine`, {
+  const response = await fetch(`${staticEndaomentURLs.api}/funds/mine`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${tokenData?.access_token}`,

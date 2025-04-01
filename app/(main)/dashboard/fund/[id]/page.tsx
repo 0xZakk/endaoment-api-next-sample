@@ -19,14 +19,14 @@ type ActivityItem = {
 type TransferItem = {
   type: string;
   createdAtUtc: string;
-  netAmount: number;
+  requestedAmount: number;
   destinationOrg?: {
     name: string;
   };
   destinationSubproject?: {
     name: string;
   };
-}
+};
 
 function formatUsdc(amount: string) {
   return new Intl.NumberFormat('en-US', {
@@ -45,6 +45,8 @@ export default async function FundDetail({ params }: FundPageProps) {
   const { data: fund, error: fundError } = await getFund(id)
   const { data: activity, error: activityError } = await getFundActivity(id)
   const { data: transfers, error: transfersError } = await getFundTransfers(id)
+
+  console.log("Transfers:", transfers)
 
   if (fundError || activityError || transfersError) {
     console.error("Error fetching fund data:", fundError, activityError, transfersError)
@@ -70,11 +72,15 @@ export default async function FundDetail({ params }: FundPageProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">USDC Balance</p>
-              <p className="text-2xl font-semibold">{formatUsdc(fund?.usdcBalance || "0")}</p>
+              <p className="text-2xl font-semibold">
+                {formatUsdc(fund?.usdcBalance || "0")}
+              </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Total Granted</p>
-              <p className="text-2xl font-semibold">{formatUsdc(fund?.totalGrantedUsdc || "0")}</p>
+              <p className="text-2xl font-semibold">
+                {formatUsdc(fund?.totalGrantedUsdc || "0")}
+              </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Grants Given</p>
@@ -93,18 +99,26 @@ export default async function FundDetail({ params }: FundPageProps) {
           {activity && activity.length > 0 ? (
             <div className="space-y-4">
               {activity.map((item: ActivityItem, index: number) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b last:border-0">
+                <div
+                  key={index}
+                  className="flex items-center justify-between py-2 border-b last:border-0"
+                >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary">{item.type}</Badge>
                       <span className="text-sm text-muted-foreground">
-                        {formatDistanceToNow(new Date(item.occurredAtUtc), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(item.occurredAtUtc), {
+                          addSuffix: true,
+                        })}
                       </span>
                     </div>
                     <p className="text-sm">
-                      {item.type === 'donation' && `Donation of ${formatUsdc(item.usdcAmount)}`}
-                      {item.type === 'grant' && `Grant of ${formatUsdc(item.usdcAmount)}`}
-                      {item.type === 'portfolio_trade' && `Portfolio trade of ${formatUsdc(item.usdcAmount)}`}
+                      {item.type === "donation" &&
+                        `Donation of ${formatUsdc(item.usdcAmount)}`}
+                      {item.type === "grant" &&
+                        `Grant of ${formatUsdc(item.usdcAmount)}`}
+                      {item.type === "portfolio_trade" &&
+                        `Portfolio trade of ${formatUsdc(item.usdcAmount)}`}
                     </p>
                   </div>
                   <div className="text-right">
@@ -131,20 +145,28 @@ export default async function FundDetail({ params }: FundPageProps) {
           {transfers && transfers.length > 0 ? (
             <div className="space-y-4">
               {transfers.map((transfer: TransferItem, index: number) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b last:border-0">
+                <div
+                  key={index}
+                  className="flex items-center justify-between py-2 border-b last:border-0"
+                >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary">{transfer.type}</Badge>
                       <span className="text-sm text-muted-foreground">
-                        {formatDistanceToNow(new Date(transfer.createdAtUtc), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(transfer.createdAtUtc), {
+                          addSuffix: true,
+                        })}
                       </span>
                     </div>
                     <p className="text-sm">
-                      {transfer.destinationOrg?.name || transfer.destinationSubproject?.name}
+                      {transfer.destinationOrg?.name ||
+                        transfer.destinationSubproject?.name}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium">{formatUsdc(transfer.netAmount.toString())}</p>
+                    <p className="font-medium">
+                      {formatUsdc(transfer.requestedAmount.toString())}
+                    </p>
                     <p className="text-sm text-muted-foreground">USDC</p>
                   </div>
                 </div>
@@ -158,5 +180,5 @@ export default async function FundDetail({ params }: FundPageProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

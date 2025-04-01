@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation'
-import { getFund, getFundActivity, getFundTransfers } from '@/utils/endaoment/actions';
+import { getFund, getFundActivity, getFundTransfers } from '@/utils/endaoment/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from 'date-fns';
+import Link from 'next/link';
 
 type FundPageProps = {
   params: { id: string }
@@ -60,7 +61,9 @@ export default async function FundDetail({ params }: FundPageProps) {
               <CardTitle className="text-2xl">{fund?.name}</CardTitle>
               <CardDescription>{fund?.description}</CardDescription>
             </div>
-            <Button>Contribute</Button>
+            <Button asChild>
+              <Link href={`/dashboard/fund/${id}/contribute`}>Contribute</Link>
+            </Button>
           </div>
         </CardHeader>
         <CardContent>

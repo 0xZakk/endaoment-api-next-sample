@@ -2,8 +2,8 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { staticEndaomentURLs } from './utils';
-import { getUserToken } from '@/utils/supabase/utils';
+import { staticEndaomentURLs } from "./constants";
+import { getUserToken } from "../supabase/utils";
 
 type Address = {
   line1: string;
@@ -25,6 +25,44 @@ type Fund = {
   name: string;
   description: string;
   advisor: FundAdvisor;
+}
+
+export type WireInstructions = {
+  beneficiary: {
+    name: string;
+    accountNumber: string;
+    typeOfAccount: string;
+    address: string;
+  };
+  receivingBank: {
+    abaRoutingNumber: string;
+    name: string;
+    address: string;
+  };
+}
+
+type DonorAddress = {
+  line1: string;
+  line2?: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+}
+
+type DonorIdentity = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: DonorAddress;
+}
+
+export type WireDonationRequest = {
+  pledgedAmountMicroDollars: string;
+  receivingFundId: string;
+  idempotencyKey: string;
+  isRebalanceRequested: boolean;
+  donorIdentity: DonorIdentity;
 }
 
 // Create a new DAF in Endaoment
@@ -184,4 +222,73 @@ export async function getFundTransfers(id: string) {
     data: transfersData,
     error: null,
   }
+}
+
+export async function getWireInstructions() {
+  const { data: token, error: tokenError } = await getUserToken()
+
+  if (tokenError) {
+    console.error("Error fetching token:", tokenError);
+    throw new Error(tokenError.message);
+  }
+
+  const response = await fetch(
+    `${staticEndaomentURLs.api}/donation-pledges/wire/details/domestic`,
+    {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token.access_token}`,
+        'Content-Type': 'application/json',
+      },
+    }
+  );
+
+  if (!response.ok) {
+    return {
+      data: null,
+      error: new Error(`Failed to fetch wire instructions: ${response.statusText}`),
+    }
+  }
+
+  const wireInstructions = await response.json();
+
+  return {
+    data: wireInstructions,
+    error: null,
+  };
+}
+
+export async function createWireDonation(request: Omit<WireDonationRequest, 'donorIdentity' | 'isRebalanceRequested'>) {
+  const { data: token, error: tokenError } = await getUserToken();
+
+  if (tokenError) {
+    console.error("Error fetching token:", tokenError);
+    throw new Error(tokenError.message);
+  }
+
+  const response = await fetch(
+    `${staticEndaomentURLs.api}/donation-pledges/wire`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    }
+  );
+
+  if (!response.ok) {
+    return {
+      data: null,
+      error: new Error(`Failed to create wire donation: ${response.statusText}`),
+    }
+  }
+
+  const donationData = await response.json();
+
+  return {
+    data: donationData,
+    error: null,
+  };
 }

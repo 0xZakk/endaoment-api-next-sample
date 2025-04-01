@@ -3,7 +3,8 @@
  */
 
 import { NextResponse } from "next/server"
-import { saveOAuthState, generateCodeVerifier, generateCodeChallenge, staticEndaomentURLs } from "@/utils/endaoment/utils"
+import { saveOAuthState, generateCodeVerifier, generateCodeChallenge } from "@/utils/endaoment/utils"
+import { staticEndaomentURLs } from "@/utils/endaoment/constants"
 import crypto from 'crypto';
 
 export async function POST(request: Request) {

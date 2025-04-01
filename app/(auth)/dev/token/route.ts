@@ -8,7 +8,8 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from "next/server"
-import { getOAuthState, staticEndaomentURLs } from "@/utils/endaoment/utils"
+import { getOAuthState } from "@/utils/endaoment/utils"
+import { staticEndaomentURLs } from "@/utils/endaoment/constants"
 
 export async function GET(request: Request) {
   const supabase = await createClient();

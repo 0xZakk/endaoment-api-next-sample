@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import Navigation from "@/components/layout/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { staticEndaomentURLs } from "@/utils/endaoment/utils";
+import { staticEndaomentURLs } from "@/utils/endaoment/constants";
 
 
 export default async function RootLayout({ children }: { children: ReactNode }) {

@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { headers } from "next/headers";
 import { createClient } from '@/utils/supabase/server'
+import { createWireDonation } from '@/utils/endaoment/server';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function login(formData: FormData) {
   const supabase = await createClient()
@@ -103,5 +105,32 @@ export async function resetPassword(formData: FormData) {
   }
 
   return redirect('/auth/reset-password/success')
+}
+
+export async function wireDonation(formData: FormData) {
+  const amount = formData.get('amount') as string;
+  const fundId = formData.get('fundId') as string;
+
+  if (!amount || !fundId) {
+    throw new Error('Amount and fund ID are required');
+  }
+
+  // Convert amount to microdollars (1 USD = 1,000,000 microdollars)
+  const pledgedAmountMicroDollars = (BigInt(Math.round(parseFloat(amount) * 1000000))).toString();
+
+  const { data, error } = await createWireDonation({
+    pledgedAmountMicroDollars,
+    receivingFundId: fundId,
+    idempotencyKey: uuidv4(),
+  });
+
+  if (error) {
+    console.error('Wire donation error:', error);
+    throw error;
+  }
+
+  console.log('Wire donation created:', data);
+
+  return redirect(`/dashboard/fund/${fundId}`);
 }
 

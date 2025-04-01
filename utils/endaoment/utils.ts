@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import crypto from 'crypto';
+import { staticEndaomentURLs } from "./constants";
 
 interface OAuthState {
   codeVerifier: string;
@@ -25,14 +26,6 @@ interface GetOAuthStateResult {
   data: OAuthStateRecord | null;
   error: Error | null;
 }
-
-export const staticEndaomentURLs = {
-  auth: 'https://auth.dev.endaoment.org',
-  api: 'https://api.dev.endaoment.org/v1',
-  verify: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-login`,
-  // redirect: process.env.NEXT_PUBLIC_APP_URL
-  redirect: "http://localhost:5454/dev/token"
-};
 
 export function toUrlSafe(base64: string) {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
@@ -202,3 +195,5 @@ export async function refreshToken() {
     error: null
   };
 }
+
+

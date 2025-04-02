@@ -51,14 +51,6 @@ export default async function FundList() {
                   <p className="text-sm text-muted-foreground">
                     {fund.description || "No description available"}
                   </p>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Category:</span>
-                    <span>{fund.category}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Balance:</span>
-                    <span>${(parseInt(fund.usdcBalance) / 1000000).toLocaleString()}</span>
-                  </div>
                 </div>
               </CardContent>
             </Card>

@@ -91,7 +91,7 @@ export async function createDaf(formData: FormData) {
   }
 
   const { data: token, error: tokenError } = await getUserToken()
-
+  
   if (tokenError) {
     console.error("Error fetching token:", tokenError);
     throw new Error(tokenError.message);
@@ -130,14 +130,43 @@ export async function createDaf(formData: FormData) {
 
 // Get Fund
 export async function getFund(id: string) {
+  const supabase = await createClient();
+
+  const { data: {user}, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    console.error("Error fetching user:", userError);
+    return {
+      data: null,
+      error: new Error(userError.message),
+    }
+  }
+
   const { data: token, error: tokenError } = await getUserToken()
 
   if (tokenError) {
     console.error("Error fetching token:", tokenError);
-    throw new Error(tokenError.message);
+    return {
+      data: null,
+      error: new Error(tokenError.message),
+    }
+  }  
+
+  const { data: fund, error: fundError } = await supabase
+    .from('funds')
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('id', id);
+
+  if (fundError) {
+    console.error("Error fetching fund:", fundError);
+    return {
+      data: null,
+      error: new Error(fundError.message),
+    }
   }
 
-  const response = await fetch(`${staticEndaomentURLs.api}/v1/funds/${id}`, {
+  const response = await fetch(`${staticEndaomentURLs.api}/v1/funds/${fund[0].endaoment_uuid}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token.access_token}`,
@@ -146,6 +175,7 @@ export async function getFund(id: string) {
   })
 
   if (!response.ok) {
+    console.error("Error fetching fund data:", response.error);
     return {
       data: null,
       error: new Error(`Failed to fetch fund data: ${response.statusText}`),
@@ -162,14 +192,43 @@ export async function getFund(id: string) {
 
 // Get Fund Activity
 export async function getFundActivity(id: string) {
+  const supabase = await createClient();
+
+  const { data: {user}, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    console.error("Error fetching user:", userError);
+    return {
+      data: null,
+      error: new Error(userError.message),
+    }
+  }
+
   const { data: token, error: tokenError } = await getUserToken()
 
   if (tokenError) {
     console.error("Error fetching token:", tokenError);
-    throw new Error(tokenError.message);
+    return {
+      data: null,
+      error: new Error(tokenError.message),
+    }
   }
 
-  const response = await fetch(`${staticEndaomentURLs.api}/v1/activity/fund/${id}`, {
+  const { data: fund, error: fundError } = await supabase
+    .from('funds')
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('id', id);
+
+  if (fundError) {
+    console.error("Error fetching fund:", fundError);
+    return {
+      data: null,
+      error: new Error(fundError.message),
+    }
+  }
+
+  const response = await fetch(`${staticEndaomentURLs.api}/v1/activity/fund/${fund[0].endaoment_uuid}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token.access_token}`,
@@ -194,6 +253,18 @@ export async function getFundActivity(id: string) {
 
 // Get Fund Transfers
 export async function getFundTransfers(id: string) {
+  const supabase = await createClient();
+
+  const { data: {user}, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    console.error("Error fetching user:", userError);
+    return {
+      data: null,
+      error: new Error(userError.message),
+    }
+  }
+
   const { data: token, error: tokenError } = await getUserToken()
 
   if (tokenError) {
@@ -201,7 +272,22 @@ export async function getFundTransfers(id: string) {
     throw new Error(tokenError.message);
   }
 
-  const response = await fetch(`${staticEndaomentURLs.api}/v1/transfers/grants/fund/${id}`, {
+  const { data: fund, error: fundError } = await supabase
+    .from('funds')
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('id', id);
+
+  if (fundError) {
+    console.error("Error fetching fund:", fundError);
+    return {
+      data: null,
+      error: new Error(fundError.message),
+    }
+  }
+
+
+  const response = await fetch(`${staticEndaomentURLs.api}/v1/transfers/grants/fund/${fund[0].endaoment_uuid}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token.access_token}`,
@@ -295,32 +381,35 @@ export async function createWireDonation(request: Omit<WireDonationRequest, 'don
 
 // Get My Funds
 export async function getMyFunds() {
-  const { data: token, error: tokenError } = await getUserToken()
+  const supabase = await createClient();
 
-  if (tokenError) {
-    console.error("Error fetching token:", tokenError);
-    throw new Error(tokenError.message);
-  }
+  const { data: {user}, error: userError } = await supabase.auth.getUser();
 
-  const response = await fetch(`${staticEndaomentURLs.api}/v1/funds/mine`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token.access_token}`,
-      'Content-Type': 'application/json',
-    },
-  })
+  console.log("User:", user);
 
-  if (!response.ok) {
+  if (userError) {
+    console.error("Error fetching user:", userError);
     return {
       data: null,
-      error: new Error(`Failed to fetch funds: ${response.statusText}`),
+      error: new Error(userError.message),
     }
   }
 
-  const fundsData = await response.json()
+  const { data: funds, error: fundsError } = await supabase
+    .from('funds')
+    .select('*')
+    .eq('user_id', user?.id);
+
+  if (fundsError) {
+    console.error("Error fetching funds:", fundsError);
+    return {
+      data: null,
+      error: new Error(fundsError.message),
+    }
+  }
 
   return {
-    data: fundsData,
+    data: funds,
     error: null,
   }
 }

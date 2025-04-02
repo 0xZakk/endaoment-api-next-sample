@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
 import { staticEndaomentURLs } from "@/utils/endaoment/constants";
+import { createClient } from '@/utils/supabase/server'
 import { getUserToken } from "@/utils/supabase/utils";
 import crypto from "crypto";
 
 export async function POST(request: Request) {
+    const supabase = await createClient();
+
     const data = await request.json();
 
     // Validate required fields
@@ -30,6 +33,20 @@ export async function POST(request: Request) {
     // Convert amount to microdollars (1 USD = 1,000,000 microdollars)
     const requestedAmount = (BigInt(Math.round(parseFloat(amount) * 1000000))).toString();
 
+    // Get the Endaoment Fund ID (instead of our ID for the fund)
+    const { data: fundData, error: fundError } = await supabase
+      .from('funds')
+      .select('*')
+      .eq('id', fund)
+      .single();
+
+    if (fundError || !fundData) {
+      return NextResponse.json(
+        { error: "Failed to get fund" },
+        { status: 400 }
+      );
+    }
+
     // Make request to Endaoment API
     const response = await fetch(
       `${staticEndaomentURLs.api}/v1/transfers/async-grants`,
@@ -40,7 +57,7 @@ export async function POST(request: Request) {
           "Authorization": `Bearer ${token.access_token}`,
         },
         body: JSON.stringify({
-          originFundId: fund,
+          originFundId: fundData.endaoment_uuid,
           destinationOrgId: org,
           requestedAmount,
           purpose,

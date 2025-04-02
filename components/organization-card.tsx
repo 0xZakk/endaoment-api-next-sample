@@ -100,49 +100,6 @@ export function OrganizationCard({ id, name, description, logo, disabled }: Orga
     setIsLoading(false);
   };
 
-  // const handleBookmarkToggle = async () => {
-  //   try {
-  //     setIsLoading(true);
-
-  //     if (isBookmarked) {
-  //       // Remove bookmark
-  //       const { error } = await supabase
-  //         .from('bookmarked_organizations')
-  //         .delete()
-  //         .eq('organization_id', id)
-  //         .eq('fund_id', fundId);
-
-  //       if (error) throw error;
-
-  //       setIsBookmarked(false);
-  //       toast.success('Organization removed from bookmarks');
-  //     } else {
-  //       // Add bookmark
-  //       const { error } = await supabase
-  //         .from('bookmarked_organizations')
-  //         .insert([
-  //           {
-  //             organization_id: id,
-  //             fund_id: fundId,
-  //             name,
-  //             description,
-  //             logo,
-  //           }
-  //         ]);
-
-  //       if (error) throw error;
-
-  //       setIsBookmarked(true);
-  //       toast.success('Organization bookmarked successfully');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error toggling bookmark:', error);
-  //     toast.error('Failed to update bookmark');
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   return (
     <>
       <Card className={`relative ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>

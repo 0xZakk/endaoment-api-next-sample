@@ -30,6 +30,12 @@ export function DonationModal({
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  console.log("Donation Modal", {
+    organizationName,
+    organizationId,
+    fundId,
+  });
+
   // Reset states when modal closes
   useEffect(() => {
     if (!isOpen) {

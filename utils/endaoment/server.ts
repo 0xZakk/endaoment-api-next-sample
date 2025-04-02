@@ -310,6 +310,7 @@ export async function getFundTransfers(id: string) {
   }
 }
 
+// Get Wire Instructions
 export async function getWireInstructions() {
   const { data: token, error: tokenError } = await getUserToken()
 
@@ -344,6 +345,7 @@ export async function getWireInstructions() {
   };
 }
 
+// Create Wire Donation
 export async function createWireDonation(request: Omit<WireDonationRequest, 'donorIdentity' | 'isRebalanceRequested'>) {
   const { data: token, error: tokenError } = await getUserToken();
 
@@ -410,6 +412,39 @@ export async function getMyFunds() {
 
   return {
     data: funds,
+    error: null,
+  }
+}
+
+// Get Bookmarks for a Fund
+export async function getBookmarks(id: string) {
+  const supabase = await createClient();
+
+  const { data: {user}, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    console.error("Error fetching user:", userError);
+    return {
+      data: null,
+      error: new Error(userError.message),
+    }
+  }
+
+  const { data: bookmarks, error: bookmarksError } = await supabase
+    .from('bookmarked_organizations')
+    .select('*')
+    .eq('fund_id', id);
+
+  if (bookmarksError) {
+    console.error("Error fetching bookmarks:", bookmarksError);
+    return {
+      data: null,
+      error: new Error(bookmarksError.message),
+    }
+  }
+
+  return {
+    data: bookmarks,
     error: null,
   }
 }

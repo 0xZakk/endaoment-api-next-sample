@@ -1,11 +1,12 @@
 import { notFound } from 'next/navigation'
-import { getFund, getFundActivity, getFundTransfers } from '@/utils/endaoment/server';
+import { getFund, getFundActivity, getFundTransfers, getBookmarks } from '@/utils/endaoment/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { Compass, CircleDollarSign } from 'lucide-react';
+import { OrganizationCard } from '@/components/organization-card';
 
 type FundPageProps = {
   params: { id: string }
@@ -46,9 +47,10 @@ export default async function FundDetail({ params }: FundPageProps) {
   const { data: fund, error: fundError } = await getFund(id)
   const { data: activity, error: activityError } = await getFundActivity(id)
   const { data: transfers, error: transfersError } = await getFundTransfers(id)
+  const { data: bookmarks, error: bookmarksError } = await getBookmarks(id)
 
-  if (fundError || activityError || transfersError) {
-    console.error("Error fetching fund data:", fundError, activityError, transfersError)
+  if (fundError || activityError || transfersError || bookmarksError) {
+    console.error("Error fetching fund data:", fundError, activityError, transfersError, bookmarksError)
     return <div>Error fetching fund data</div>
   }
 
@@ -97,6 +99,33 @@ export default async function FundDetail({ params }: FundPageProps) {
               <p className="text-2xl font-semibold">{fund?.grantsGiven || 0}</p>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Bookmarked Organizations */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Bookmarked Organizations</CardTitle>
+          <CardDescription>Organizations you've saved for future reference</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {bookmarks && bookmarks.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {bookmarks.map((org) => (
+                <OrganizationCard
+                  key={org.organization_id}
+                  id={org.organization_id}
+                  name={org.name}
+                  description={org.description}
+                  logo={org.logo}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              No bookmarked organizations
+            </div>
+          )}
         </CardContent>
       </Card>
 

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
+import { Compass, CircleDollarSign } from 'lucide-react';
 
 type FundPageProps = {
   params: { id: string }
@@ -46,8 +47,6 @@ export default async function FundDetail({ params }: FundPageProps) {
   const { data: activity, error: activityError } = await getFundActivity(id)
   const { data: transfers, error: transfersError } = await getFundTransfers(id)
 
-  console.log("Transfers:", transfers)
-
   if (fundError || activityError || transfersError) {
     console.error("Error fetching fund data:", fundError, activityError, transfersError)
     return <div>Error fetching fund data</div>
@@ -63,9 +62,20 @@ export default async function FundDetail({ params }: FundPageProps) {
               <CardTitle className="text-2xl">{fund?.name}</CardTitle>
               <CardDescription>{fund?.description}</CardDescription>
             </div>
-            <Button asChild>
-              <Link href={`/dashboard/fund/${id}/contribute`}>Contribute</Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild>
+                <Link href={`/dashboard/fund/${id}/explore`}>
+                  <Compass className="w-4 h-4 mr-2" />
+                  Explore
+                </Link>
+              </Button>
+              <Button asChild>
+                <Link href={`/dashboard/fund/${id}/contribute`}>
+                  <CircleDollarSign className="w-4 h-4 mr-2" />
+                  Contribute
+                </Link>
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>

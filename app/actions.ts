@@ -129,8 +129,6 @@ export async function wireDonation(formData: FormData) {
     throw error;
   }
 
-  console.log('Wire donation created:', data);
-
   return redirect(`/dashboard/fund/${fundId}`);
 }
 

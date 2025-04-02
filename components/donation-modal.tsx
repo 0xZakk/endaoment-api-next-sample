@@ -65,7 +65,6 @@ export function DonationModal({
       }
 
       const result = await response.json();
-      console.log("Grant response:", result);
       setIsSuccess(true);
 
       // Close the modal after a short delay

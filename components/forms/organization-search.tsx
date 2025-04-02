@@ -21,11 +21,11 @@ export function OrganizationSearchForm({ onSearchStart, onSearchComplete }: Orga
     onSearchStart();
 
     const formData = new FormData(e.currentTarget);
-    
+
     // Get checkbox values
     const isClaimed = formData.get("claimed") === "on";
     const isUnclaimed = formData.get("unclaimed") === "on";
-    
+
     // Format status string according to API requirements
     let status = "";
     if (isClaimed && isUnclaimed) {
@@ -44,7 +44,6 @@ export function OrganizationSearchForm({ onSearchStart, onSearchComplete }: Orga
       subdivisions: formData.get("subdivisions"),
       status,
     };
-    console.log("Form data:", data);
 
     const searchTerm = data.searchTerm as string;
     const response = await fetch(
@@ -58,7 +57,9 @@ export function OrganizationSearchForm({ onSearchStart, onSearchComplete }: Orga
     }
 
     const results = await response.json();
+
     console.log("Search results:", results);
+
     setIsLoading(false);
     onSearchComplete(results);
   }

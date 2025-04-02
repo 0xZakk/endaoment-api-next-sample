@@ -49,7 +49,7 @@ export function SignupForm({
                 <div className="flex items-center">
                   <Label htmlFor="password-confirm">Confirm Password</Label>
                 </div>
-                <Input id="password-confirm" type="password-confirm" required />
+                <Input id="password-confirm" type="password" required />
               </div>
               <Button formAction={signupActions} type="submit" className="w-full">
                 Sign Up

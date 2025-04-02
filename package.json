@@ -6,7 +6,10 @@
     "dev": "next dev --turbopack --port 5454",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "supabase:start": "supabase start",
+    "supabase:stop": "supabase stop",
+    "supabase:status": "supabase status"
   },
   "dependencies": {
     "@radix-ui/react-checkbox": "^1.1.4",

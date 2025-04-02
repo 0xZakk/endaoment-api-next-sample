@@ -4,11 +4,12 @@ import { ReactNode } from "react";
 import { Toaster } from "sonner";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+
   return (
     <html lang="en">
-      <body>
-        {children}
+      <body className="flex h-screen w-screen overflow-hidden">
         <Toaster />
+        {children}
       </body>
     </html>
   );

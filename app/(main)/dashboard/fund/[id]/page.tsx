@@ -7,28 +7,11 @@ import { formatDistanceToNow } from 'date-fns';
 import Link from 'next/link';
 import { Compass, CircleDollarSign } from 'lucide-react';
 import { OrganizationCard } from '@/components/organization-card';
+import { ActivityItem, TransferItem } from '@/types/dashboard';
 
 type FundPageProps = {
   params: { id: string }
 }
-
-type ActivityItem = {
-  type: string;
-  occurredAtUtc: string;
-  usdcAmount: string;
-}
-
-type TransferItem = {
-  type: string;
-  createdAtUtc: string;
-  requestedAmount: number;
-  destinationOrg?: {
-    name: string;
-  };
-  destinationSubproject?: {
-    name: string;
-  };
-};
 
 function formatUsdc(amount: string) {
   return new Intl.NumberFormat('en-US', {

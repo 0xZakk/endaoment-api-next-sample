@@ -4,20 +4,13 @@ import { OrganizationCard } from "./organization-card";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useState } from "react";
-
-interface Organization {
-  id: string;
-  name: string;
-  description: string;
-  logo?: string;
-}
+import { Organization } from '@/types/endaoment';
 
 interface OrganizationResultsProps {
   organizations: Organization[];

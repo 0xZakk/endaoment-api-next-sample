@@ -1,3 +1,8 @@
+# Endaoment API Sample App
+
+This is a sample application that demonstrates the capabilities of the Endaoment
+API for managing donor-advised funds (DAFs).
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

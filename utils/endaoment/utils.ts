@@ -1,31 +1,12 @@
 import { createClient } from '@/utils/supabase/server'
 import crypto from 'crypto';
 import { staticEndaomentURLs } from "./constants";
-
-interface OAuthState {
-  codeVerifier: string;
-  codeChallenge: string;
-  state: string;
-}
-
-interface OAuthStateRecord {
-  id: string;
-  user_id: string;
-  code_verifier: string;
-  code_challenge: string;
-  state: string;
-  created_at: string;
-}
-
-interface SaveOAuthStateResult {
-  data: OAuthStateRecord | null;
-  error: Error | null;
-}
-
-interface GetOAuthStateResult {
-  data: OAuthStateRecord | null;
-  error: Error | null;
-}
+import { 
+  OAuthState,
+  OAuthStateRecord,
+  SaveOAuthStateResult,
+  GetOAuthStateResult 
+} from '@/types/endaoment';
 
 export function toUrlSafe(base64: string) {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');

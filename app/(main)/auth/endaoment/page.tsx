@@ -1,8 +1,5 @@
 "use client"
-/*
- * Show a message here that they'll be redirected
- * - hit the /api/auth/init-login endpoint
- */
+
 import { Button } from "@/components/ui/button";
 import {
   Card,

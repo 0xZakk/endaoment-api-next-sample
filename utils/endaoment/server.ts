@@ -4,66 +4,10 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { staticEndaomentURLs } from "./constants";
 import { getUserToken } from "../supabase/utils";
-
-type Address = {
-  line1: string;
-  line2?: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
-}
-
-type FundAdvisor = {
-  firstName: string;
-  lastName?: string;
-  email: string;
-  address: Address;
-}
-
-type Fund = {
-  name: string;
-  description: string;
-  advisor: FundAdvisor;
-}
-
-export type WireInstructions = {
-  beneficiary: {
-    name: string;
-    accountNumber: string;
-    typeOfAccount: string;
-    address: string;
-  };
-  receivingBank: {
-    abaRoutingNumber: string;
-    name: string;
-    address: string;
-  };
-}
-
-type DonorAddress = {
-  line1: string;
-  line2?: string;
-  city: string;
-  state: string;
-  zip: string;
-  country: string;
-}
-
-type DonorIdentity = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  address: DonorAddress;
-}
-
-export type WireDonationRequest = {
-  pledgedAmountMicroDollars: string;
-  receivingFundId: string;
-  idempotencyKey: string;
-  isRebalanceRequested: boolean;
-  donorIdentity: DonorIdentity;
-}
+import { 
+  Fund,
+  WireDonationRequest 
+} from '@/types/endaoment';
 
 // Create a new DAF in Endaoment
 export async function createDaf(formData: FormData) {

@@ -8,6 +8,7 @@ export default function ExplorePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [organizations, setOrganizations] = useState([]);
 
+  // TODO: Type this
   const handleSearchResults = (results: any[]) => {
     setOrganizations(results);
     setIsLoading(false);

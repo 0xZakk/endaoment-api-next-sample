@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
-import { WireInstructions } from "@/utils/endaoment/server"
+import { WireInstructions } from "@/types/endaoment"
 
 interface WireDonationFormProps extends React.ComponentPropsWithoutRef<"div"> {
   fundId: string;

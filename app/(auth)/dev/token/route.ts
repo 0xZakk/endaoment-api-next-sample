@@ -1,11 +1,3 @@
-/* This endpoint will verify the login and exchange the code for an authentication token. */
-
-// This may need to become a route instead of an endpoint
-// - User gets navigated to here from Endaoment
-// - This is where we verify the state and code of their login
-//   at which point we can save their Endaomend OAuth token and
-//   render a success page for them .
-
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from "next/server"
 import { getOAuthState } from "@/utils/endaoment/utils"
